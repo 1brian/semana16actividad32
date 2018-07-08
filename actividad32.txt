@@ -1,0 +1,168 @@
+Brian=# CREATE DATABASE pintagram;
+CREATE DATABASE
+Brian=# \c pintagram
+You are now connected to database "pintagram" as user "Brian".
+pintagram=# CREATE TABLE usuario(id SERIAL, name VARCHAR(20), password VARCHAR(20), PRIMARY KEY (id));
+CREATE TABLE
+pintagram=# CREATE TABLE imagenes(id_img SERIAL, url VARCHAR(300), likes INTEGER, PRIMARY KEY (id_img), id SERIAL REFERENCES usuario(id));
+CREATE TABLE
+pintagram=# SELECT * FROM usuario
+pintagram-# ;
+ id | name | password 
+----+------+----------
+(0 rows)
+
+pintagram=# SELECT * FROM imagenes;
+ id_img | url | likes | id 
+--------+-----+-------+----
+(0 rows)
+
+pintagram=# CREATE TABLE tags(id_tag SERIAL, tag_name VARCHAR(20) PRIMARY KEY (id_tag));
+ERROR:  syntax error at or near "("
+LINE 1: ...s(id_tag SERIAL, tag_name VARCHAR(20) PRIMARY KEY (id_tag));
+                                                             ^
+pintagram=# CREATE TABLE tags(id_tag SERIAL, tag_name VARCHAR(20) PRIMARY KEY(id_tag));
+ERROR:  syntax error at or near "("
+LINE 1: ...gs(id_tag SERIAL, tag_name VARCHAR(20) PRIMARY KEY(id_tag));
+                                                             ^
+pintagram=# CREATE TABLE tags(id_tag SERIAL, tag_name VARCHAR(20), PRIMARY KEY(id_tag));
+CREATE TABLE
+pintagram=# SELECT * FROM tags;
+ id_tag | tag_name 
+--------+----------
+(0 rows)
+
+pintagram=# INSERT INTO ususario VALUES('1','usuario1', '123');
+ERROR:  relation "ususario" does not exist
+LINE 1: INSERT INTO ususario VALUES('1','usuario1', '123');
+                    ^
+pintagram=# INSERT INTO usuario VALUES('1','usuario1', '123');
+INSERT 0 1
+pintagram=# INSERT INTO usuario VALUES('2','usuario2', '123');
+INSERT 0 1
+pintagram=# INSERT INTO usuario VALUES('3','usuario3', '123');
+INSERT 0 1
+pintagram=# SELECT * FROM usuario
+pintagram-# ;
+ id |   name   | password 
+----+----------+----------
+  1 | usuario1 | 123
+  2 | usuario2 | 123
+  3 | usuario3 | 123
+(3 rows)
+
+pintagram=# INSERT INTO imagenes VALUES('1','url1', '3', '1');
+INSERT 0 1
+pintagram=# INSERT INTO imagenes VALUES('2','url2', '3', '2');
+INSERT 0 1
+pintagram=# INSERT INTO imagenes VALUES('3','url2', '3', '3');
+INSERT 0 1
+pintagram=# SELECT * FROM tags;
+ id_tag | tag_name 
+--------+----------
+(0 rows)
+
+pintagram=# ALTER TABLE imagenes ADD COLUMN 'tags' VARCHAR(100);
+ERROR:  syntax error at or near "'tags'"
+LINE 1: ALTER TABLE imagenes ADD COLUMN 'tags' VARCHAR(100);
+                                        ^
+pintagram=# ALTER TABLE imagenes ADD COLUMN 'cantidad_tags' VARCHAR(100);
+ERROR:  syntax error at or near "'cantidad_tags'"
+LINE 1: ALTER TABLE imagenes ADD COLUMN 'cantidad_tags' VARCHAR(100)...
+                                        ^
+pintagram=# ALTER TABLE imagenes ADD COLUMN 'cantidad_tags'( VARCHAR(100));
+ERROR:  syntax error at or near "'cantidad_tags'"
+LINE 1: ALTER TABLE imagenes ADD COLUMN 'cantidad_tags'( VARCHAR(100...
+                                        ^
+pintagram=# ALTER TABLE imagenes ADD COLUMN 'cantidad_tags'(VARCHAR(100));
+ERROR:  syntax error at or near "'cantidad_tags'"
+LINE 1: ALTER TABLE imagenes ADD COLUMN 'cantidad_tags'(VARCHAR(100)...
+                                        ^
+pintagram=# ALTER TABLE imagenes ADD COLUMN cantidad_tags(VARCHAR(100));
+ERROR:  syntax error at or near "("
+LINE 1: ALTER TABLE imagenes ADD COLUMN cantidad_tags(VARCHAR(100));
+                                                     ^
+pintagram=# ALTER TABLE imagenes ADD COLUMN cantidad_tags VARCHAR(100);
+ALTER TABLE
+pintagram=# SELECT * FROM imagenes;
+ id_img | url  | likes | id | cantidad_tags 
+--------+------+-------+----+---------------
+      1 | url1 |     3 |  1 | 
+      2 | url2 |     3 |  2 | 
+      3 | url2 |     3 |  3 | 
+(3 rows)
+
+pintagram=# UPDATE imagenes SET cantidad_tags = 3;
+UPDATE 3
+pintagram=# SELECT * FROM imagenes;
+ id_img | url  | likes | id | cantidad_tags 
+--------+------+-------+----+---------------
+      1 | url1 |     3 |  1 | 3
+      2 | url2 |     3 |  2 | 3
+      3 | url2 |     3 |  3 | 3
+(3 rows)
+
+pintagram=# INSERT INTO tags VALUES('1', 'tag1');
+INSERT 0 1
+pintagram=# INSERT INTO tags VALUES('2', 'tag2');
+INSERT 0 1
+pintagram=# INSERT INTO tags VALUES('3', 'tag3');
+INSERT 0 1
+pintagram=# INSERT INTO tags VALUES('4', 'tag4');
+INSERT 0 1
+pintagram=# INSERT INTO tags VALUES('5', 'tag5');
+INSERT 0 1
+pintagram=# INSERT INTO tags VALUES('6', 'tag6');
+INSERT 0 1
+pintagram=# INSERT INTO tags VALUES('7', 'tag7');
+INSERT 0 1
+pintagram=# INSERT INTO tags VALUES('8', 'tag8');
+INSERT 0 1
+pintagram=# SELECT * FROM tags;
+ id_tag | tag_name 
+--------+----------
+      1 | tag1
+      2 | tag2
+      3 | tag3
+      4 | tag4
+      5 | tag5
+      6 | tag6
+      7 | tag7
+      8 | tag8
+(8 rows)
+
+pintagram=# SELECT * FROM imagenes;
+ id_img | url  | likes | id | cantidad_tags 
+--------+------+-------+----+---------------
+      1 | url1 |     3 |  1 | 3
+      2 | url2 |     3 |  2 | 3
+      3 | url2 |     3 |  3 | 3
+(3 rows)
+
+pintagram=# SELECT id, likes from imagenes;
+ id | likes 
+----+-------
+  1 |     3
+  2 |     3
+  3 |     3
+(3 rows)
+
+pintagram=# SELECT id FROM usuarios INNER JOIN imagenes ON A.key = B.key;
+ERROR:  relation "usuarios" does not exist
+LINE 1: SELECT id FROM usuarios INNER JOIN imagenes ON A.key = B.key...
+                       ^
+pintagram=# SELECT id FROM usuario INNER JOIN imagenes ON A.key = B.key;
+ERROR:  missing FROM-clause entry for table "a"
+LINE 1: SELECT id FROM usuario INNER JOIN imagenes ON A.key = B.key;
+
+pintagram=# SELECT id FROM usuario INNER JOIN imagenes ON A.key = B.key;
+ERROR:  missing FROM-clause entry for table "a"
+LINE 1: SELECT id FROM usuario INNER JOIN imagenes ON A.key = B.key;
+                                                      ^
+pintagram=# SELECT id FROM usuario FULL OUTER JOIN imagenes ON usuarios.key = imagenes.key;
+ERROR:  missing FROM-clause entry for table "usuarios"
+LINE 1: ...ELECT id FROM usuario FULL OUTER JOIN imagenes ON usuarios.k...
+                                                             ^
+pintagram=# SELECT id FROM usuario FULL OUTER JOIN imagenes ON usuario.key = imagenes.key;
+ERROR:  column usuario.key does not exist
+LINE 1: ...ELECT id FROM usuario FULL OUTER JOIN imagenes ON usuario.ke...
